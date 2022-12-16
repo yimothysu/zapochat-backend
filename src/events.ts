@@ -13,13 +13,15 @@ export const ioSocketToEvents: (io: Server, socket: Socket) => EventsType = (
   disconnect: () => {
     removeClient(socket.id);
     io.emit("removeClient", socket.id);
+
+    console.log(`disconnected socket id '${socket.id}'`);
   },
   sendMsg: (sendMsg: SendMsg) => {
     const receiveMsg = addMsg(socket.id, sendMsg);
     io.emit("sendMsg", sendMsg.channel, receiveMsg);
   },
   join: (name?: string) => {
-    const nameToChangeTo = name || "Anonymous";
+    const nameToChangeTo = name || "";
     changeName(socket.id, nameToChangeTo);
     socket.broadcast.emit("newClient", getClient(socket.id));
 
@@ -30,6 +32,8 @@ export const ioSocketToEvents: (io: Server, socket: Socket) => EventsType = (
 
     const clients = getClients();
     socket.emit("getClients", clients);
+
+    console.log(`joined socket id '${socket.id}' as '${nameToChangeTo}'`);
   },
   changeName: (newName: string) => {
     changeName(socket.id, newName);
@@ -61,6 +65,8 @@ export const ioToEvents: (io: Server) => EventsType = (io: Server) => ({
     });
 
     changeName(socket.id, "");
+
+    console.log(`connected socket id '${socket.id}'`);
   },
   disconnect: () => {
     console.log("Server disconnected");
