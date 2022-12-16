@@ -16,6 +16,12 @@ export const ioSocketToEvents: (io: Server, socket: Socket) => EventsType = (
 
     console.log(`disconnected socket id '${socket.id}'`);
   },
+  disconnecting: () => {
+    removeClient(socket.id);
+    io.emit("removeClient", socket.id);
+
+    console.log(`disconnecting socket id '${socket.id}'`);
+  },
   sendMsg: (sendMsg: SendMsg) => {
     const receiveMsg = addMsg(socket.id, sendMsg);
     io.emit("sendMsg", sendMsg.channel, receiveMsg);
